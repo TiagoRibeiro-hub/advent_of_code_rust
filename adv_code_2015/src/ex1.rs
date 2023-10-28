@@ -26,9 +26,9 @@ pub fn floor_chars(input: &str) -> i32 {
 pub fn floor_bytes(input: &str) -> i32 {
     let mut floor: i32 = 0;
     for &item in input.as_bytes().iter() {
-        if item == '(' as u8 {
+        if item == b'(' {
             floor += 1;
-        } else if item == ')' as u8 {
+        } else if item == b')' {
             floor -= 1;
         }
     }
@@ -38,9 +38,9 @@ pub fn floor_bytes(input: &str) -> i32 {
 pub fn floor_basement_same_var(input: &str) -> i32 {
     let mut floor: i32 = 0;
     for (i, &item) in input.as_bytes().iter().enumerate() {
-        if item == '(' as u8 {
+        if item == b'(' {
             floor += 1;
-        } else if item == ')' as u8 {
+        } else if item == b')' {
             floor -= 1;
         }
         if floor == -1 {
@@ -55,9 +55,9 @@ pub fn floor_basement(input: &str) -> usize {
     let mut floor: i32 = 0;
     let mut res: usize = 0;
     for (i, &item) in input.as_bytes().iter().enumerate() {
-        if item == '(' as u8 {
+        if item == b'(' {
             floor += 1;
-        } else if item == ')' as u8 {
+        } else if item == b')' {
             floor -= 1;
         }
         if floor == -1 {

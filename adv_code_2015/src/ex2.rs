@@ -3,14 +3,18 @@ use std::{cmp::min, fs::File, io};
 // https://adventofcode.com/2015/day/2
 
 fn read_input() -> Vec<String> {
-    std::fs::read_to_string("/home/tiago/rust/projects/advent_of_code/advent_of_code/files/wrapper_paper.txt")
-        .expect("Should have been able to read the file")
-        .lines()
-        .map(String::from)
-        .collect()
+    std::fs::read_to_string(
+        "/home/tiago/rust/projects/advent_of_code/advent_of_code/files/wrapper_paper.txt",
+    )
+    .expect("Should have been able to read the file")
+    .lines()
+    .map(String::from)
+    .collect()
 }
 fn read_lines() -> io::Result<io::Lines<io::BufReader<File>>> {
-    super::read_lines("/home/tiago/rust/projects/advent_of_code/advent_of_code/files/wrapper_paper.txt")
+    super::read_lines(
+        "/home/tiago/rust/projects/advent_of_code/advent_of_code/files/wrapper_paper.txt",
+    )
 }
 
 fn papper_wrapper_needed(l: u32, w: u32, h: u32) -> u32 {
@@ -46,19 +50,16 @@ pub fn wrapper_paper_read_input() -> u32 {
 pub fn wrapper_paper_read_lines() -> u32 {
     let mut sum: u32 = 0;
     if let Ok(lines) = read_lines() {
-        for line in lines {
-            if let Ok(value) = line {
-                let indxs = get_indexes(&value, 'x');
-                let l = value[..indxs[0]].parse::<u32>().unwrap();
-                let w = value[indxs[0] + 1..indxs[1]].parse::<u32>().unwrap();
-                let h = value[indxs[1] + 1..].parse::<u32>().unwrap();
-                sum += papper_wrapper_needed(l, w, h);
-            }
+        for value in lines.flatten() {
+            let indxs = get_indexes(&value, 'x');
+            let l = value[..indxs[0]].parse::<u32>().unwrap();
+            let w = value[indxs[0] + 1..indxs[1]].parse::<u32>().unwrap();
+            let h = value[indxs[1] + 1..].parse::<u32>().unwrap();
+            sum += papper_wrapper_needed(l, w, h);
         }
     }
     sum
 }
-
 
 fn area(str: &str, char: char) -> u32 {
     let mut sides: (u32, u32, u32) = (0, 0, 0);
@@ -90,10 +91,8 @@ pub fn wrapper_paper_read_input_area() -> u32 {
 pub fn wrapper_paper_read_lines_area() -> u32 {
     let mut sum: u32 = 0;
     if let Ok(lines) = read_lines() {
-        for line in lines {
-            if let Ok(value) = line {
-                sum += area(&value, 'x');
-            }
+        for value in lines.flatten() {
+            sum += area(&value, 'x');
         }
     }
     sum
@@ -147,10 +146,8 @@ fn ribbon_total_2(str: &str, char: char) -> u32 {
 pub fn ribbon_length() -> u32 {
     let mut sum: u32 = 0;
     if let Ok(lines) = read_lines() {
-        for line in lines {
-            if let Ok(value) = line {
-                sum += ribbon_total(&value, 'x');
-            }
+        for value in lines.flatten() {
+            sum += ribbon_total(&value, 'x');
         }
     }
     sum
@@ -159,10 +156,8 @@ pub fn ribbon_length() -> u32 {
 pub fn ribbon_length_2() -> u32 {
     let mut sum: u32 = 0;
     if let Ok(lines) = read_lines() {
-        for line in lines {
-            if let Ok(value) = line {
-                sum += ribbon_total_2(&value, 'x');
-            }
+        for value in lines.flatten() {
+            sum += ribbon_total_2(&value, 'x');
         }
     }
     sum

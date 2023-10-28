@@ -44,8 +44,12 @@ pub fn delivers_presents_bench(c: &mut Criterion) {
         b.iter(|| delivers_presents(&input))
     });
 
-    c.bench_function("delivers_presents_hash_set", |b| {
-        b.iter(|| delivers_presents_hash_set(&input))
+    // c.bench_function("delivers_presents_hash_set", |b| {
+    //     b.iter(|| delivers_presents_hash_set(&input))
+    // });
+
+    c.bench_function("delivers_presents_robot", |b| {
+        b.iter(|| delivers_presents_robot(&input))
     });
 }
 
