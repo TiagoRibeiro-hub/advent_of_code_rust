@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use adv_code_2015::{ex1::*, ex2::*, ex3::*};
+use adv_code_2015::{ex1::*, ex2::*, ex3::*, ex4::*};
 
 // fn floor_bench(c: &mut Criterion) {
 //     let input = black_box(read_input_one());
@@ -38,18 +38,29 @@ use adv_code_2015::{ex1::*, ex2::*, ex3::*};
 //     });
 // }
 
-pub fn delivers_presents_bench(c: &mut Criterion) {
-    let input = black_box(read_input_three());
-    c.bench_function("delivers_presents", |b| {
-        b.iter(|| delivers_presents(&input))
+// pub fn delivers_presents_bench(c: &mut Criterion) {
+//     let input = black_box(read_input_three());
+//     c.bench_function("delivers_presents", |b| {
+//         b.iter(|| delivers_presents(&input))
+//     });
+
+//     c.bench_function("delivers_presents_hash_set", |b| {
+//         b.iter(|| delivers_presents_hash_set(&input))
+//     });
+
+//     c.bench_function("delivers_presents_robot", |b| {
+//         b.iter(|| delivers_presents_robot(&input))
+//     });
+// }
+
+pub fn mining_bench(c: &mut Criterion) {
+
+    c.bench_function("first_five_loop", |b| {
+        b.iter(|| first_five_loop())
     });
 
-    // c.bench_function("delivers_presents_hash_set", |b| {
-    //     b.iter(|| delivers_presents_hash_set(&input))
-    // });
-
-    c.bench_function("delivers_presents_robot", |b| {
-        b.iter(|| delivers_presents_robot(&input))
+    c.bench_function("first_five", |b| {
+        b.iter(|| first_five())
     });
 }
 
@@ -59,6 +70,7 @@ criterion_group!(
     // floor_basement_bench,
     // wrapper_paper_bench,
     // ribbon_length_bench,
-    delivers_presents_bench
+    //delivers_presents_bench,
+    mining_bench
 );
 criterion_main!(benches);
