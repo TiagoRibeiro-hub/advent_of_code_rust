@@ -25,7 +25,7 @@ pub fn first_five() -> u64 {
         hasher.input(key);
         hasher.input(i.to_string().as_bytes());
         
-        let mut output = [0; 16]; // An MD5 is 16 bytes
+        let mut output = [0; 16];
         hasher.result(&mut output);
 
         // * bytes [0, 0] become "00 00"
@@ -52,7 +52,7 @@ pub fn first_six() -> u64 {
         hasher.input(key);
         hasher.input(i.to_string().as_bytes());
         
-        let mut output = [0; 16]; // An MD5 is 16 bytes
+        let mut output = [0; 16];
         hasher.result(&mut output);
 
         let first_five = output[0] as i32 + output[1] as i32 + output[2] as i32;
