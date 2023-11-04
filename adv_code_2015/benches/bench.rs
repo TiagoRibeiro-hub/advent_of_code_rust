@@ -1,4 +1,4 @@
-use adv_code_2015::{ex1::*, ex2::*, ex3::*, ex4::*, ex5::*};
+use adv_code_2015::{ex1::*, ex2::*, ex3::*, ex4::*, ex5::*, ex6::*};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 // fn floor_bench(c: &mut Criterion) {
@@ -63,17 +63,26 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 //         b.iter(|| first_five())
 //     });
 // }
-pub fn nice_strings_bench(c: &mut Criterion) {
+// pub fn nice_strings_bench(c: &mut Criterion) {
 
-    c.bench_function("nice_strings", |b| {
-        b.iter(|| nice_strings())
+//     c.bench_function("nice_strings", |b| {
+//         b.iter(|| nice_strings())
+//     });
+
+//     c.bench_function("nice_strings_part2", |b| {
+//         b.iter(|| nice_strings_part2())
+//     });
+// }
+pub fn lights_on_bench(c: &mut Criterion) {
+
+    c.bench_function("lights_on_get_idxs_split", |b| {
+        b.iter(|| lights_on_get_idxs_split())
     });
 
-    c.bench_function("nice_strings_part2", |b| {
-        b.iter(|| nice_strings_part2())
+    c.bench_function("lights_on_get_idxs", |b| {
+        b.iter(|| lights_on_get_idxs())
     });
 }
-
 criterion_group!(
     benches,
     // floor_bench,
@@ -82,6 +91,7 @@ criterion_group!(
     // ribbon_length_bench,
     // delivers_presents_bench,
     //mining_bench,
-    nice_strings_bench,
+    //nice_strings_bench,
+    lights_on_bench,
 );
 criterion_main!(benches);

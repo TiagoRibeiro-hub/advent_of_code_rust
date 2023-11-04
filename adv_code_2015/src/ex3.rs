@@ -174,7 +174,6 @@ pub fn delivers_presents_robot(input: &str) -> i32 {
 #[test]
 fn test() {
     let input = read_input_three();
-    //let nr_presents = delivers_presents_robot("v>v<vvv<<vv^v<v>vv>v<<<^^^^^<<^<vv>^>v^>^>^>^>^>"); // 42
     let nr_presents = delivers_presents(&input);
     assert_eq!(nr_presents, 2572);
     let nr_presents = delivers_presents_robot(&input);
