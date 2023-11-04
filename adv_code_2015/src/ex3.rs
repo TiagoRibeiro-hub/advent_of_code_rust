@@ -5,7 +5,7 @@ use std::collections::{HashMap, HashSet};
 
 pub fn read_input_three() -> String {
     std::fs::read_to_string(
-        "/home/tiago/rust/projects/advent_of_code/advent_of_code/files/grid_of_houses.txt",
+        super::get_current_dir_files() + "/grid_of_houses.txt",
     )
     .expect("Should have been able to read the file")
 }

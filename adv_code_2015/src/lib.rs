@@ -15,10 +15,7 @@ where P: AsRef<Path>, {
     Ok(io::BufReader::new(file).lines())
 }
 
-fn is_zero_aligned(buf: &[u8]) -> bool {
-    let (prefix, aligned, suffix) = unsafe { buf.align_to::<u128>() };
-
-    prefix.iter().all(|&x| x == 0)
-        && suffix.iter().all(|&x| x == 0)
-        && aligned.iter().all(|&x| x == 0)
+fn get_current_dir_files() -> String {
+    let dir = std::env::current_dir().expect("Current dir not found");
+    dir.to_str().unwrap().to_owned() + "/../files"
 }

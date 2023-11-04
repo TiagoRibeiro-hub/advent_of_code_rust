@@ -1,8 +1,8 @@
 // https://adventofcode.com/2015/day/5
-use std::{collections::HashMap, fs::File, io};
+use std::{fs::File, io};
 
 fn read_lines() -> io::Result<io::Lines<io::BufReader<File>>> {
-    super::read_lines("/home/tiago/rust/projects/advent_of_code/advent_of_code/files/strings.txt")
+    super::read_lines(super::get_current_dir_files() + "/strings.txt")
 }
 
 pub fn nice_strings() -> u32 {

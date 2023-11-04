@@ -3,7 +3,7 @@
 use std::fs;
 
 pub fn read_input_one() -> String {
-    fs::read_to_string("/home/tiago/rust/projects/advent_of_code/advent_of_code/files/floor.txt")
+    fs::read_to_string(super::get_current_dir_files() + "/floor.txt")
         .expect("Should have been able to read the file")
 }
 

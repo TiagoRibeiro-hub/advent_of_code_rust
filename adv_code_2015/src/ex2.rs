@@ -3,18 +3,14 @@ use std::{cmp::min, fs::File, io};
 // https://adventofcode.com/2015/day/2
 
 fn read_input() -> Vec<String> {
-    std::fs::read_to_string(
-        "/home/tiago/rust/projects/advent_of_code/advent_of_code/files/wrapper_paper.txt",
-    )
-    .expect("Should have been able to read the file")
-    .lines()
-    .map(String::from)
-    .collect()
+    std::fs::read_to_string(super::get_current_dir_files() + "/wrapper_paper.txt")
+        .expect("Should have been able to read the file")
+        .lines()
+        .map(String::from)
+        .collect()
 }
 fn read_lines() -> io::Result<io::Lines<io::BufReader<File>>> {
-    super::read_lines(
-        "/home/tiago/rust/projects/advent_of_code/advent_of_code/files/wrapper_paper.txt",
-    )
+    super::read_lines(super::get_current_dir_files() + "/wrapper_paper.txt")
 }
 
 fn papper_wrapper_needed(l: u32, w: u32, h: u32) -> u32 {
