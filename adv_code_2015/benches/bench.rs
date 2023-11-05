@@ -75,13 +75,30 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 // }
 pub fn lights_on_bench(c: &mut Criterion) {
 
-    c.bench_function("lights_on_get_idxs_split", |b| {
-        b.iter(|| lights_on_get_idxs_split())
-    });
+    // c.bench_function("lights_on_get_idxs_split", |b| {
+    //     b.iter(|| lights_on_get_idxs_split())
+    // });
 
-    c.bench_function("lights_on_get_idxs", |b| {
-        b.iter(|| lights_on_get_idxs())
-    });
+    // c.bench_function("lights_on_get_idxs", |b| {
+    //     b.iter(|| lights_on_get_idxs())
+    // });
+
+    // c.bench_function("lights_on_get_idxs_2", |b| {
+    //     b.iter(|| lights_on_get_idxs_2())
+    // });
+
+    // c.bench_function("lights_on", |b| {
+    //     b.iter(|| lights_on())
+    // });
+
+    // c.bench_function("lights_on_2", |b| {
+    //     b.iter(|| lights_on_2())
+    // });
+
+    // c.bench_function("brightness", |b| {
+    //     b.iter(|| brightness())
+    // });
+
 }
 criterion_group!(
     benches,

@@ -5,54 +5,68 @@ fn read_lines() -> io::Result<io::Lines<io::BufReader<File>>> {
     super::read_lines(super::get_current_dir_files() + "/lighting_configuration.txt")
 }
 
-fn get_idxs(line: &String, conf: &str) -> ((u16, u16), (u16, u16)) {
-    let res = line.split(" ");
-    let mut start = (0, 0);
-    let mut end = (0, 0);
+pub fn lights_on_2() -> u32 {
+    let mut lights: [[u8; 1000]; 1000] = [[0; 1_000]; 1_000]; // column, row => 999,0
+    let mut total: u32 = 0;
 
-    let mut next = false;
-    let mut first = true;
-    for part in res.into_iter() {
-        if next {
-            let s = part.split(",").into_iter();
-            let mut i = 0;
-            if first {
-                for item in s {
-                    if i == 0 {
-                        start.0 = item.parse::<u16>().unwrap();
-                        i += 1;
-                    } else {
-                        start.1 = item.parse::<u16>().unwrap();
+    if let Ok(lines) = read_lines() {
+        for line in lines.flatten() {
+            let values = get_idxs_2(&line);
+            let col = values.0 .0.abs_diff(values.1 .0);
+            let row = values.0 .1.abs_diff(values.1 .1);
+            match values.2 {
+                "on" => {
+                    for i in 0..=row {
+                        let r_i = (values.0 .1 + i) as usize;
+                        for j in 0..=col {
+                            let c_j = (values.0 .0 + j) as usize;
+                            let v = lights[r_i][c_j];
+                            if v == 0 {
+                                total += 1;
+                                lights[r_i][c_j] = 1;
+                            } 
+                        }
                     }
-                }
-                first = false;
-            } else {
-                for item in s {
-                    if i == 0 {
-                        end.0 = item.parse::<u16>().unwrap();
-                        i += 1;
-                    } else {
-                        end.1 = item.parse::<u16>().unwrap();
+                },
+                "off" => {
+                    for i in 0..=row {
+                        let r_i = (values.0 .1 + i) as usize;
+                        for j in 0..=col {
+                            let c_j = (values.0 .0 + j) as usize;
+                            let v = lights[r_i][c_j];
+                            if v == 1 {
+                                total -= 1;
+                                lights[r_i][c_j] = 0;
+                            } 
+                        }
                     }
-                }
-                break;
+                },
+                "toggle" => {
+                    for i in 0..=row {
+                        let r_i = (values.0 .1 + i) as usize;
+                        for j in 0..=col {
+                            let c_j = (values.0 .0 + j) as usize;
+                            let v = lights[r_i][c_j];
+                            if v == 1 {
+                                lights[r_i][c_j] = 0;
+                                total -= 1;
+                            } else {
+                                lights[r_i][c_j] = 1;
+                                total += 1;
+                            }
+                        }
+                    }
+                },
+                _ => {}
             }
-            next = false;
-        } else if part == conf || part == "through" {
-            next = true;
         }
     }
-
-    (start, end)
+    total
 }
+
 
 pub fn lights_on() -> u32 {
     let mut lights: [[u8; 1000]; 1000] = [[0; 1_000]; 1_000]; // column, row => 999,0
-    for r in 0..1_000 {
-        for c in 0..1_000 {
-            lights[r][c] = 0;
-        }
-    }
     let mut total: u32 = 0;
 
     if let Ok(lines) = read_lines() {
@@ -117,11 +131,6 @@ pub fn lights_on() -> u32 {
 
 pub fn brightness() -> u32 {
     let mut lights: [[u8; 1000]; 1000] = [[0; 1_000]; 1_000]; // column, row => 999,0
-    for r in 0..1_000 {
-        for c in 0..1_000 {
-            lights[r][c] = 0;
-        }
-    }
     let mut total: u32 = 0;
 
     if let Ok(lines) = read_lines() {
@@ -179,14 +188,56 @@ pub fn brightness() -> u32 {
 
 #[test]
 fn test() {
-    // let res = lights_on();
-    // assert_eq!(res, 569999);
+    //let res = lights_on_2();
+    let res = lights_on();
+    assert_eq!(res, 569999);
     let res = brightness();
     assert_eq!(res, 17836115);
-    println!("res- {:?}", res);
+    //println!("res- {:?}", res);
 }
 
-// BENCH MARK GET IDXS
+// BENCH MARK GET IDXS FUNCS
+fn get_idxs(line: &String, conf: &str) -> ((u16, u16), (u16, u16)) {
+    let res = line.split(" ");
+    let mut start = (0, 0);
+    let mut end = (0, 0);
+
+    let mut next = false;
+    let mut first = true;
+    for part in res.into_iter() {
+        if next {
+            let s = part.split(",").into_iter();
+            let mut i = 0;
+            if first {
+                for item in s {
+                    if i == 0 {
+                        start.0 = item.parse::<u16>().unwrap();
+                        i += 1;
+                    } else {
+                        start.1 = item.parse::<u16>().unwrap();
+                    }
+                }
+                first = false;
+            } else {
+                for item in s {
+                    if i == 0 {
+                        end.0 = item.parse::<u16>().unwrap();
+                        i += 1;
+                    } else {
+                        end.1 = item.parse::<u16>().unwrap();
+                    }
+                }
+                break;
+            }
+            next = false;
+        } else if part == conf || part == "through" {
+            next = true;
+        }
+    }
+
+    (start, end)
+}
+
 fn get_idxs_split(line: &String, conf: &str) -> ((u16, u16), (u16, u16)) {
     let res = line.split(conf).nth(1).unwrap();
     let mut first = true;
@@ -213,6 +264,34 @@ fn get_idxs_split(line: &String, conf: &str) -> ((u16, u16), (u16, u16)) {
     });
 
     (start, end)
+}
+
+fn get_idxs_2(line: &String) -> ((u16, u16), (u16, u16), &str) {
+    let mut parts = line.split(|c| c == ' ' || c == ',');
+    let mut opt = parts.next().unwrap();
+		if opt == "turn" {
+			opt = parts.next().unwrap();
+		};
+
+    let mut start = (0, 0);
+    start.0 = parts.next().unwrap().parse::<u16>().unwrap();
+    start.1 = parts.next().unwrap().parse::<u16>().unwrap();
+    // through
+    parts.next();
+    let mut end = (0, 0);
+    end.0 = parts.next().unwrap().parse::<u16>().unwrap();
+    end.1 = parts.next().unwrap().parse::<u16>().unwrap();
+
+    (start, end, opt)
+}
+
+// BENCH MARK GET IDXS
+pub fn lights_on_get_idxs_2() {
+    if let Ok(lines) = read_lines() {
+        for line in lines.flatten() {
+            get_idxs_2(&line);
+        }
+    }
 }
 
 pub fn lights_on_get_idxs_split() {
