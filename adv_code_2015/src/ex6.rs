@@ -47,10 +47,10 @@ fn get_idxs(line: &String, conf: &str) -> ((u16, u16), (u16, u16)) {
 }
 
 pub fn lights_on() -> u32 {
-    let mut lights: [[i8; 1000]; 1000] = [[0; 1_000]; 1_000]; // column, row => 999,0
+    let mut lights: [[u8; 1000]; 1000] = [[0; 1_000]; 1_000]; // column, row => 999,0
     for r in 0..1_000 {
         for c in 0..1_000 {
-            lights[r][c] = -1;
+            lights[r][c] = 0;
         }
     }
     let mut total: u32 = 0;
@@ -69,7 +69,7 @@ pub fn lights_on() -> u32 {
                     for j in 0..=col {
                         let c_j = (idxs.0 .0 + j) as usize;
                         let v = lights[r_i][c_j];
-                        if v == -1 {
+                        if v == 0 {
                             total += 1;
                             lights[r_i][c_j] = 1;
                         } 
@@ -86,7 +86,7 @@ pub fn lights_on() -> u32 {
                         let v = lights[r_i][c_j];
                         if v == 1 {
                             total -= 1;
-                            lights[r_i][c_j] = -1;
+                            lights[r_i][c_j] = 0;
                         } 
                     }
                 }
@@ -100,7 +100,7 @@ pub fn lights_on() -> u32 {
                         let c_j = (idxs.0 .0 + j) as usize;
                         let v = lights[r_i][c_j];
                         if v == 1 {
-                            lights[r_i][c_j] = -1;
+                            lights[r_i][c_j] = 0;
                             total -= 1;
                         } else {
                             lights[r_i][c_j] = 1;
@@ -115,10 +115,74 @@ pub fn lights_on() -> u32 {
     total
 }
 
+pub fn brightness() -> u32 {
+    let mut lights: [[u8; 1000]; 1000] = [[0; 1_000]; 1_000]; // column, row => 999,0
+    for r in 0..1_000 {
+        for c in 0..1_000 {
+            lights[r][c] = 0;
+        }
+    }
+    let mut total: u32 = 0;
+
+    if let Ok(lines) = read_lines() {
+        for line in lines.flatten() {
+            let idxs: ((u16, u16), (u16, u16));
+            let col: u16;
+            let row: u16;
+            if line.contains("on") {
+                idxs = get_idxs(&line, "on");
+                col = idxs.0 .0.abs_diff(idxs.1 .0);
+                row = idxs.0 .1.abs_diff(idxs.1 .1);
+                for i in 0..=row {
+                    let r_i = (idxs.0 .1 + i) as usize;
+                    for j in 0..=col {
+                        let c_j = (idxs.0 .0 + j) as usize;
+                        let v = lights[r_i][c_j];
+                        total += 1;
+                        lights[r_i][c_j] = v + 1;
+                    }
+                }
+            } else if line.contains("off") {
+                idxs = get_idxs(&line, "off");
+                col = idxs.0 .0.abs_diff(idxs.1 .0);
+                row = idxs.0 .1.abs_diff(idxs.1 .1);
+                for i in 0..=row {
+                    let r_i = (idxs.0 .1 + i) as usize;
+                    for j in 0..=col {
+                        let c_j = (idxs.0 .0 + j) as usize;
+                        let v = lights[r_i][c_j];
+                        if v > 0 {
+                            total -= 1;
+                            lights[r_i][c_j] = v - 1;
+                        }
+                    }
+                }
+            } else if line.contains("toggle") {
+                idxs = get_idxs(&line, "toggle");
+                col = idxs.0 .0.abs_diff(idxs.1 .0);
+                row = idxs.0 .1.abs_diff(idxs.1 .1);
+                for i in 0..=row {
+                    let r_i = (idxs.0 .1 + i) as usize;
+                    for j in 0..=col {
+                        let c_j = (idxs.0 .0 + j) as usize;
+                        let v = lights[r_i][c_j];
+                        total += 2;
+                        lights[r_i][c_j] = v + 2;
+                    }
+                }
+            }
+        }
+    }
+
+    total
+}
+
 #[test]
 fn test() {
-    let res = lights_on();
-    assert_eq!(res, 569999); // max = 1.000.000
+    // let res = lights_on();
+    // assert_eq!(res, 569999);
+    let res = brightness();
+    assert_eq!(res, 17836115);
     println!("res- {:?}", res);
 }
 
