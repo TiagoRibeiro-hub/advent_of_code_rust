@@ -1,4 +1,4 @@
-use adv_code_2015::{ex1::*, ex2::*, ex3::*, ex4::*, ex5::*, ex6::*};
+use adv_code_2015::{ex1::*, ex2::*, ex3::*, ex4::*, ex5::*, ex6::*, ex7::*};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 // fn floor_bench(c: &mut Criterion) {
@@ -73,7 +73,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 //         b.iter(|| nice_strings_part2())
 //     });
 // }
-pub fn lights_on_bench(c: &mut Criterion) {
+// pub fn lights_on_bench(c: &mut Criterion) {
 
     // c.bench_function("lights_on_get_idxs_split", |b| {
     //     b.iter(|| lights_on_get_idxs_split())
@@ -98,6 +98,13 @@ pub fn lights_on_bench(c: &mut Criterion) {
     // c.bench_function("brightness", |b| {
     //     b.iter(|| brightness())
     // });
+// }
+
+pub fn wires_bench(c: &mut Criterion) {
+    let input = black_box(read_input_three());
+    c.bench_function("get_wire_a", |b| {
+        b.iter(|| get_wire_a())
+    });
 
 }
 criterion_group!(
@@ -109,6 +116,7 @@ criterion_group!(
     // delivers_presents_bench,
     //mining_bench,
     //nice_strings_bench,
-    lights_on_bench,
+    //lights_on_bench,
+    wires_bench
 );
 criterion_main!(benches);
