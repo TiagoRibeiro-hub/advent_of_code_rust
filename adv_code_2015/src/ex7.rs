@@ -1,25 +1,23 @@
 // https://adventofcode.com/2015/day/7
 use std::{collections::HashMap, fs::File, io};
 
-
 fn read_lines() -> io::Result<io::Lines<io::BufReader<File>>> {
     super::read_lines(super::get_current_dir_files() + "/signals.txt")
 }
 
-
+#[derive(Debug)]
+enum Operation {
+    Not,
+    And,
+    Or,
+    Lshift,
+    Rshift,
+}
 #[derive(Debug)]
 struct Signals {
     pub first: String,
     pub second: Option<String>,
     pub op: Option<Operation>,
-}
-#[derive(Debug)]
-enum Operation {
-    NOT,
-    AND,
-    OR,
-    LSHIFT,
-    RSHIFT,
 }
 
 impl Signals {
@@ -32,71 +30,102 @@ impl Signals {
     }
 }
 
-pub fn get_wire_a() -> i64 {
+fn get_value_string(value: &str) -> String {
+    let sec_string: String;
+    if let Ok(nr) = value.parse::<i64>() {
+        sec_string = nr.to_string();
+    }
+    else {
+        sec_string = value.to_string();
+    }
+    sec_string
+}
+
+fn get_operation(op: &str) -> Operation {
+    //* "AND", "OR", "LSHIFT", "RSHIFT"
+    let mut operation = Operation::And;
+    if op == "OR" {
+        operation = Operation::Or;
+    }
+    else if op == "LSHIFT" {
+        operation = Operation::Lshift;
+    }
+    else if op == "RSHIFT" {
+        operation = Operation::Rshift;
+    }
+    else if op == "NOT" {
+        panic!("Operation Not can not be set here")
+    }
+    operation
+}
+
+pub fn get_signal_a() -> i64 {
     // lf AND lq -> ls => key ls, value lf, lq, AND
-    let mut signals: HashMap<String, Signals> = HashMap::new();
+    let mut wires: HashMap<String, Signals> = HashMap::new();
     // 0 -> c => key c, value 0
-    let mut wires: HashMap<String, i64> = HashMap::new();
+    let mut signals: HashMap<String, i64> = HashMap::new();
 
     if let Ok(lines) = read_lines() {
         for line in lines.flatten() {
+            //* cm AND co -> cp
             let mut parts = line.split(' ');
             let first = parts.next().unwrap();
             let res = first.parse::<i64>();
             match res {
                 Ok(value) => {
-                    //* 0 -> c
-                    let key = parts.last().unwrap().to_string();
-                    wires.insert(key, value);
+                    let op = parts.next().unwrap();
+                    if op == "->" {
+                        // ! 0 -> cu
+                        let key = parts.last().unwrap().to_string();
+                        signals.insert(key, value);
+                    }else {
+                        // ! 1 AND lu -> lv || 1 AND 2 -> lv
+                        let second = parts.next().unwrap();
+                        parts.next(); // ->
+                        wires
+                        .insert(
+                            parts.next().unwrap().to_string(), 
+                            Signals::new(
+                                first.to_string(), 
+                                Some(get_value_string(second)), 
+                                Some(get_operation(op)))
+                        );
+                    }
                 }
                 Err(_) => {
                     if first == "NOT" {
-                        //* NOT kt -> ku
+                        // ! NOT kt -> ku || NOT 1 -> ku
                         let second = parts.next().unwrap();
-                        let key = parts.last().unwrap().to_string();
-                        signals.insert(
-                            key, 
+                        wires.insert(
+                            parts.last().unwrap().to_string(), 
                             Signals::new(
-                                second.to_string(), 
+                                get_value_string(second), 
                                 None, 
-                                Some(Operation::NOT)
+                                Some(Operation::Not)
                             )
                         );
                     } else {
                         let op = parts.next().unwrap();
                         if op == "->" {
-                            //* ge -> gg
-                            let key = parts.next().unwrap().to_string();
-                            signals.insert(
-                                key,
+                            // ! ge -> gg || 1 -> gg
+                            wires.insert(
+                                parts.next().unwrap().to_string(),
                                  Signals::new(
-                                    first.to_string(),
+                                    get_value_string(first),
                                     None,
                                     None)
                                 );
                         } else {
-                            // gf OR ge -> gg
+                            // gf OR ge -> gg || 1 OR ge -> gg || 1 OR 2 -> gg || gf OR 1 -> gg
                             let second = parts.next().unwrap();
                             parts.next(); // ->
-                            let key = parts.next().unwrap().to_string();
-                            //* "AND", "OR", "LSHIFT", "RSHIFT"
-                            let mut operation = Operation::AND;
-                            if op == "OR" {
-                                operation = Operation::OR;
-                            }
-                            else if op == "LSHIFT" {
-                                operation = Operation::LSHIFT;
-                            }
-                            else if op == "RSHIFT" {
-                                operation = Operation::RSHIFT;
-                            }
-                            signals
+                            wires
                                 .insert(
-                                    key, 
+                                    parts.next().unwrap().to_string(), 
                                     Signals::new(
-                                        first.to_string(), 
-                                        Some(second.to_string()), 
-                                        Some(operation))
+                                        get_value_string(first), 
+                                        Some(get_value_string(second)), 
+                                        Some(get_operation(op)))
                                 );
                         }
                     }
@@ -105,73 +134,74 @@ pub fn get_wire_a() -> i64 {
         }
     }
 
-    get_wire(&signals, &mut wires, &String::from("a"))
+    get_signal(&wires, &mut signals, &String::from("a"))
 }
 
-#[allow(unused)]
-fn get_wire(signals: &HashMap<String, Signals>, wires: &mut HashMap<String, i64>, key: &String) -> i64 {
-    let mut wire_value: i64 = 0;
-    match wires.get(key) {
+fn get_signal(wires: &HashMap<String, Signals>, signals: &mut HashMap<String, i64>, key: &String) -> i64 {
+    let mut wire_value;
+    match signals.get(key) {
         Some(value) => {
             wire_value = *value;
+            return wire_value;
         },
         None => {
-            if let Some(sig) = signals.get(key) {
+            if let Some(sig) = wires.get(key) {
                 if let Some(op) = &sig.op {
                     if let Some(sec) = &sig.second {
-                        // gf OR ge -> gg
-                        let mut f = 0;
-                        if let Ok(nr) = sig.first.parse::<i64>() {
-                            f = nr;
+                        let f;
+                        // ! 1 OR ge -> gg
+                        if let Ok(v) = sig.first.parse::<i64>() {
+                            f = v;
                         }
                         else {
-                            f = get_wire(signals, wires, &sig.first);
+                            // ! gf OR ge -> gg
+                            f = get_signal(wires, signals, &sig.first);
                         }
-                        let mut s = 0;
-                        if let Ok(nr) = sec.parse::<i64>() {
-                            s = nr;
+                        let s;
+                        // ! f OR 2 -> gg
+                        if let Ok(v) = sec.parse::<i64>() {
+                            s = v;
                         }
                         else {
-                            s = get_wire(signals, wires, &sec);
+                            // ! f OR ge -> gg
+                            s = get_signal(wires, signals, &sec);
                         }
-                        // * "AND", "OR", "LSHIFT", "RSHIFT"
+                        //* "AND", "OR", "LSHIFT", "RSHIFT"
                         match op {
-                            Operation::NOT => {
+                            Operation::Not => {
                                 panic!("Operation Not can not be done here")
                             },
-                            Operation::AND => wire_value = f & s,
-                            Operation::OR => wire_value = f | s,
-                            Operation::LSHIFT => wire_value = f << s,
-                            Operation::RSHIFT => wire_value = f >> s,
+                            Operation::And => wire_value = f & s,
+                            Operation::Or => wire_value = f | s,
+                            Operation::Lshift => wire_value = f << s,
+                            Operation::Rshift => wire_value = f >> s,
                         }
-
                     }
                     else {
-                        // * NOT kt -> ku
-                        let mut nr = 0;
+                        let nr;
+                        // ! NOT 1 -> ku
                         if let Ok(v) = sig.first.parse::<i64>() {
                             nr = v;
                         }
                         else {
-                            nr = get_wire(signals, wires, &sig.first);
+                            // ! NOT kt -> ku
+                            nr = get_signal(wires, signals, &sig.first);
                         }
-
                         wire_value = !nr;
                         if wire_value < 0 {
                             wire_value = 65535 - nr;
                         }
-                        wires.insert(key.to_string(), wire_value);
                     }
                 }
                 else {
-                    // * ge -> gg
+                    // ! 1 -> gg
                     if let Ok(nr) = sig.first.parse::<i64>() {
                         wire_value = nr;
                     }
                     else {
-                        wire_value = get_wire(signals, wires, &sig.first);
-                    }
-                    wires.insert(key.to_string(), wire_value);
+                        // ! ge -> gg
+                        wire_value = get_signal(wires, signals, &sig.first);
+                    }     
                 }
             }
             else {
@@ -179,6 +209,10 @@ fn get_wire(signals: &HashMap<String, Signals>, wires: &mut HashMap<String, i64>
             }
         } 
     }
+    if wire_value > 65535 {
+        panic!("Bigger than 65535")
+    }
+    signals.insert(key.to_string(), wire_value);
     wire_value
 }
 
@@ -186,9 +220,9 @@ fn get_wire(signals: &HashMap<String, Signals>, wires: &mut HashMap<String, i64>
 #[test]
 fn test() {
     //example()
-    let res = get_wire_a();
-    // assert_eq!(res, 569999);
-    println!("res- {:?}", res); // < 65535
+    let res = get_signal_a();
+    assert_eq!(res, 16076);
+    println!("res- {:?}", res);
 }
 
 fn example() {

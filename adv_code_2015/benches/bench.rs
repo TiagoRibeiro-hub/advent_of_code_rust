@@ -101,9 +101,8 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 // }
 
 pub fn wires_bench(c: &mut Criterion) {
-    let input = black_box(read_input_three());
-    c.bench_function("get_wire_a", |b| {
-        b.iter(|| get_wire_a())
+    c.bench_function("get_signal_a", |b| {
+        b.iter(|| get_signal_a())
     });
 
 }
