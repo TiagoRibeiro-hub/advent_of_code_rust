@@ -23,9 +23,9 @@ struct Signals {
 impl Signals {
     fn new(first: String, second: Option<String>, op: Option<Operation>) -> Self {
         Signals {
-            first: first,
-            second: second,
-            op: op,
+            first,
+            second,
+            op,
         }
     }
 }
@@ -164,7 +164,7 @@ fn get_signal(wires: &HashMap<String, Signals>, signals: &mut HashMap<String, i6
                         }
                         else {
                             // ! f OR ge -> gg
-                            s = get_signal(wires, signals, &sec);
+                            s = get_signal(wires, signals, sec);
                         }
                         //* "AND", "OR", "LSHIFT", "RSHIFT"
                         match op {
@@ -225,6 +225,7 @@ fn test() {
     println!("res- {:?}", res);
 }
 
+#[allow(unused)]
 fn example() {
     let x = 123;
     let y = 456;

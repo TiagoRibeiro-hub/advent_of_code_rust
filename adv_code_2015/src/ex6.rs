@@ -197,8 +197,8 @@ fn test() {
 }
 
 // BENCH MARK GET IDXS FUNCS
-fn get_idxs(line: &String, conf: &str) -> ((u16, u16), (u16, u16)) {
-    let res = line.split(" ");
+fn get_idxs(line: &str, conf: &str) -> ((u16, u16), (u16, u16)) {
+    let res = line.split(' ');
     let mut start = (0, 0);
     let mut end = (0, 0);
 
@@ -206,7 +206,7 @@ fn get_idxs(line: &String, conf: &str) -> ((u16, u16), (u16, u16)) {
     let mut first = true;
     for part in res.into_iter() {
         if next {
-            let s = part.split(",").into_iter();
+            let s = part.split(',');
             let mut i = 0;
             if first {
                 for item in s {
@@ -238,12 +238,12 @@ fn get_idxs(line: &String, conf: &str) -> ((u16, u16), (u16, u16)) {
     (start, end)
 }
 
-fn get_idxs_split(line: &String, conf: &str) -> ((u16, u16), (u16, u16)) {
+fn get_idxs_split(line: &str, conf: &str) -> ((u16, u16), (u16, u16)) {
     let res = line.split(conf).nth(1).unwrap();
     let mut first = true;
 
     let mut start = (0, 0);
-    res.split(" ").nth(0).unwrap().split(",").for_each(|v| {
+    res.split(' ').nth(0).unwrap().split(',').for_each(|v| {
         if first {
             start.0 = v.parse::<u16>().unwrap();
             first = false;
@@ -254,7 +254,7 @@ fn get_idxs_split(line: &String, conf: &str) -> ((u16, u16), (u16, u16)) {
     // through
     first = true;
     let mut end = (0, 0);
-    res.split(" ").nth(2).unwrap().split(",").for_each(|v| {
+    res.split(' ').nth(2).unwrap().split(',').for_each(|v| {
         if first {
             end.0 = v.parse::<u16>().unwrap();
             first = false;
@@ -266,7 +266,7 @@ fn get_idxs_split(line: &String, conf: &str) -> ((u16, u16), (u16, u16)) {
     (start, end)
 }
 
-fn get_idxs_2(line: &String) -> ((u16, u16), (u16, u16), &str) {
+fn get_idxs_2(line: &str) -> ((u16, u16), (u16, u16), &str) {
     let mut parts = line.split(|c| c == ' ' || c == ',');
     let mut opt = parts.next().unwrap();
 		if opt == "turn" {

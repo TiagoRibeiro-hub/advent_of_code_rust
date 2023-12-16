@@ -55,10 +55,8 @@ pub fn nice_strings_part2() -> u32 {
             let mut c: Vec<[u8; 2]> = Vec::new();
 
             for (i, item) in input.iter().enumerate() {
-                if !repeated_letter && i > 1 {
-                    if input[i - 2] == *item {
-                        repeated_letter = true;
-                    }
+                if !repeated_letter && i > 1 && input[i - 2] == *item{
+                    repeated_letter = true;
                 }
                 if len == i {
                     break;
