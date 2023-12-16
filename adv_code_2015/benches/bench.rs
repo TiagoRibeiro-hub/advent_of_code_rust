@@ -102,7 +102,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 pub fn wires_bench(c: &mut Criterion) {
     c.bench_function("get_signal_a", |b| {
-        b.iter(|| get_signal_a())
+        b.iter(|| get_signal_part_one())
     });
 
 }

@@ -59,7 +59,7 @@ fn get_operation(op: &str) -> Operation {
     operation
 }
 
-pub fn get_signal_a() -> i64 {
+pub fn get_signal_part_one() -> i64 {
     // lf AND lq -> ls => key ls, value lf, lq, AND
     let mut wires: HashMap<String, Signals> = HashMap::new();
     // 0 -> c => key c, value 0
@@ -133,7 +133,89 @@ pub fn get_signal_a() -> i64 {
             }
         }
     }
+   
+    get_signal(&wires, &mut signals, &String::from("a"))
+}
 
+pub fn get_signal_part_two() -> i64 {
+    // lf AND lq -> ls => key ls, value lf, lq, AND
+    let mut wires: HashMap<String, Signals> = HashMap::new();
+    // 0 -> c => key c, value 0
+    let mut signals: HashMap<String, i64> = HashMap::new();
+
+    if let Ok(lines) = read_lines() {
+        for line in lines.flatten() {
+            //* cm AND co -> cp
+            let mut parts = line.split(' ');
+            let first = parts.next().unwrap();
+            let res = first.parse::<i64>();
+            match res {
+                Ok(value) => {
+                    let op = parts.next().unwrap();
+                    if op == "->" {
+                        // ! 0 -> cu
+                        let key = parts.last().unwrap().to_string();
+                        if key == "b" {
+                            signals.insert(key, 16076_i64);
+                        }
+                        else {
+                            signals.insert(key, value);
+                        }
+                    }else {
+                        // ! 1 AND lu -> lv || 1 AND 2 -> lv
+                        let second = parts.next().unwrap();
+                        parts.next(); // ->
+                        wires
+                        .insert(
+                            parts.next().unwrap().to_string(), 
+                            Signals::new(
+                                first.to_string(), 
+                                Some(get_value_string(second)), 
+                                Some(get_operation(op)))
+                        );
+                    }
+                }
+                Err(_) => {
+                    if first == "NOT" {
+                        // ! NOT kt -> ku || NOT 1 -> ku
+                        let second = parts.next().unwrap();
+                        wires.insert(
+                            parts.last().unwrap().to_string(), 
+                            Signals::new(
+                                get_value_string(second), 
+                                None, 
+                                Some(Operation::Not)
+                            )
+                        );
+                    } else {
+                        let op = parts.next().unwrap();
+                        if op == "->" {
+                            // ! ge -> gg || 1 -> gg
+                            wires.insert(
+                                parts.next().unwrap().to_string(),
+                                 Signals::new(
+                                    get_value_string(first),
+                                    None,
+                                    None)
+                                );
+                        } else {
+                            // gf OR ge -> gg || 1 OR ge -> gg || 1 OR 2 -> gg || gf OR 1 -> gg
+                            let second = parts.next().unwrap();
+                            parts.next(); // ->
+                            wires
+                                .insert(
+                                    parts.next().unwrap().to_string(), 
+                                    Signals::new(
+                                        get_value_string(first), 
+                                        Some(get_value_string(second)), 
+                                        Some(get_operation(op)))
+                                );
+                        }
+                    }
+                }
+            }
+        }
+    }
     get_signal(&wires, &mut signals, &String::from("a"))
 }
 
@@ -220,9 +302,11 @@ fn get_signal(wires: &HashMap<String, Signals>, signals: &mut HashMap<String, i6
 #[test]
 fn test() {
     //example()
-    let res = get_signal_a();
+    let res = get_signal_part_one();
     assert_eq!(res, 16076);
-    println!("res- {:?}", res);
+    let res = get_signal_part_two();
+    assert_eq!(res, 2797);
+    // println!("res- {:?}", res);
 }
 
 #[allow(unused)]
