@@ -1,10 +1,7 @@
 use std::{io, fs::File};
 
-
-
 fn read_lines() -> io::Result<io::Lines<io::BufReader<File>>> {
-    //super::read_lines(super::get_current_dir_files() + "/matchsticks.txt")
-    super::read_lines("D:\\Projects\\advent_of_code_rust\\files\\matchsticks.txt")
+    super::read_lines(super::get_current_dir_files() + "/matchsticks.txt")
 }
 
 pub fn matchsticks() -> i32 {
@@ -164,9 +161,9 @@ pub fn matchsticks_part_2() -> i32 {
 
 #[test]
 fn test() {
-    // let res = matchsticks_2();
-    // assert_eq!(res, 1342);
+    let res = matchsticks_2();
+    assert_eq!(res, 1342);
     let res = matchsticks_part_2();
-    //assert_eq!(res, 1342);
-    println!("res- {:?}", res); // > 1332
+    assert_eq!(res, 2074);
+    println!("res- {:?}", res); 
 }

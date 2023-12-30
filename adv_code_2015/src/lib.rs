@@ -6,7 +6,7 @@ pub mod ex5;
 pub mod ex6;
 pub mod ex7;
 pub mod ex8;
-
+pub mod ex9;
 use std::{io::{self, BufRead}, fs::File, path::Path};
 
 
