@@ -1,4 +1,4 @@
-use adv_code_2015::{ex1::*, ex2::*, ex3::*, ex4::*, ex5::*, ex6::*, ex7::*};
+use adv_code_2015::{ex1::*, ex2::*, ex3::*, ex4::*, ex5::*, ex6::*, ex7::*, ex8::*};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 // fn floor_bench(c: &mut Criterion) {
@@ -100,12 +100,21 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
     // });
 // }
 
-pub fn wires_bench(c: &mut Criterion) {
-    c.bench_function("get_signal_a", |b| {
-        b.iter(|| get_signal_part_one())
-    });
+// pub fn wires_bench(c: &mut Criterion) {
+//     c.bench_function("get_signal_a", |b| {
+//         b.iter(|| get_signal_part_one())
+//     });
+// }
 
+pub fn matchsticks_bench(c: &mut Criterion) {
+    c.bench_function("matchsticks", |b| {
+        b.iter(|| matchsticks())
+    });
+    c.bench_function("matchsticks_2", |b| {
+        b.iter(|| matchsticks_2())
+    });
 }
+
 criterion_group!(
     benches,
     // floor_bench,
@@ -116,6 +125,7 @@ criterion_group!(
     //mining_bench,
     //nice_strings_bench,
     //lights_on_bench,
-    wires_bench
+    //wires_bench,
+    matchsticks_bench
 );
 criterion_main!(benches);
